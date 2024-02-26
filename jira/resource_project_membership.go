@@ -20,10 +20,22 @@ type ProjectMembershipRequest struct {
 }
 
 // ProjectMembership represents a JIRA ProjectMembership
+type ActorGroup struct {
+	GroupId string `json:"groupId"`
+	Name    string `json:"name"`
+}
+
+// ProjectMembership represents a JIRA ProjectMembership
+type ActorUser struct {
+	AccountId string `json:"accountId"`
+}
+
+// ProjectMembership represents a JIRA ProjectMembership
 type ProjectMembership struct {
-	ID   int    `json:"id,omitempty"`
-	Name string `json:"name"`
-	Type string `json:"type"`
+	ID    int        `json:"id,omitempty"`
+	Type  string     `json:"type"`
+	Group ActorGroup `json:"actorGroup,omitempty"`
+	User  ActorUser  `json:"actorUser,omitempty"`
 }
 
 // ProjectRole represents the actors of a Role within a Project
@@ -51,7 +63,7 @@ func resourceProjectMembership() *schema.Resource {
 				ForceNew: true,
 				Required: true,
 			},
-			"username": &schema.Schema{
+			"account_id": &schema.Schema{
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,
@@ -61,7 +73,7 @@ func resourceProjectMembership() *schema.Resource {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,
-				ConflictsWith: []string{"username"},
+				ConflictsWith: []string{"account_id"},
 			},
 		},
 	}
@@ -70,20 +82,20 @@ func resourceProjectMembership() *schema.Resource {
 func setProjectMembershipResource(w *ProjectMembership, d *schema.ResourceData) {
 
 	if w.Type == actorTypeUser {
-		d.Set("username", w.Name)
+		d.Set("account_id", w.User.AccountId)
 	} else if w.Type == actorTypeGroup {
-		d.Set("group", w.Name)
+		d.Set("group", w.Group.Name)
 	}
 }
 
 func setProjectMembership(w *ProjectMembershipRequest, d *schema.ResourceData) error {
 
-	if name, ok := d.GetOk("username"); ok {
+	if name, ok := d.GetOk("account_id"); ok {
 		w.User = []string{name.(string)}
 	} else if name, ok := d.GetOk("group"); ok {
 		w.Group = []string{name.(string)}
 	} else {
-		return errors.New("Neither username nor group is set")
+		return errors.New("Neither account_id nor group is set")
 	}
 
 	return nil
@@ -153,8 +165,8 @@ func resourceProjectMembershipDelete(d *schema.ResourceData, m interface{}) erro
 
 	var urlStr string
 
-	if username, ok := d.GetOk("username"); ok {
-		urlStr = fmt.Sprintf("%s/%d?user=%s", projectRoleAPIEndpoint(projectKey), roleID, url.QueryEscape(username.(string)))
+	if account_id, ok := d.GetOk("account_id"); ok {
+		urlStr = fmt.Sprintf("%s/%d?user=%s", projectRoleAPIEndpoint(projectKey), roleID, url.QueryEscape(account_id.(string)))
 
 	} else if group, ok := d.GetOk("group"); ok {
 		urlStr = fmt.Sprintf("%s/%d?group=%s", projectRoleAPIEndpoint(projectKey), roleID, url.QueryEscape(group.(string)))
