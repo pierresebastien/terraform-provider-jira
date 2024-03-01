@@ -1,4 +1,4 @@
-module github.com/fourplusone/terraform-provider-jira
+module github.com/pierresebastien/terraform-provider-jira
 
 go 1.13
 

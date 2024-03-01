@@ -22,11 +22,11 @@ resource "jira_group" "tf_group" {
   name = "Terraform Managed"
 }
 
-// Grant Project Access to user "bot" 
+// Grant Project Access to user with id "xxx" 
 resource "jira_project_membership" "member" {
   project_key = "TRF"
   role_id = "${jira_role.role.id}"
-  username = "bot"
+  account_id = "xxx"
 }
 
 // Grant Project Access to group "bot" 
@@ -48,7 +48,7 @@ resource "jira_project_membership" "group_member" {
 ### Optional
 
 - `group` (String)
-- `username` (String)
+- `account_id` (String)
 
 ### Read-Only
 

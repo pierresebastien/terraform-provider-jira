@@ -18,9 +18,9 @@ resource "jira_group" "tf_group" {
   name = "Terraform Managed"
 }
 
-// User "bot" will be a Member of "Terraform Managed"
+// User with id "xxx" will be a Member of "Terraform Managed"
 resource "jira_group_membership" "gm_1" {
-  username = "bot"
+  account_id = "xxx"
   group = "${jira_group.tf_group.name}"
 }
 ```
@@ -31,7 +31,7 @@ resource "jira_group_membership" "gm_1" {
 ### Required
 
 - `group` (String)
-- `username` (String)
+- `account_id` (String)
 
 ### Read-Only
 

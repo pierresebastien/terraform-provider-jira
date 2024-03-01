@@ -1,8 +1,8 @@
 # terraform-provider-jira
 
-[![Build & Tests](https://github.com/fourplusone/terraform-provider-jira/actions/workflows/go.yml/badge.svg)](https://github.com/fourplusone/terraform-provider-jira/actions/workflows/go.yml)
+[![Build](https://github.com/pierresebastien/terraform-provider-jira/actions/workflows/go.yml/badge.svg)](https://github.com/pierresebastien/terraform-provider-jira/actions/workflows/go.yml)
 
-Terraform Provider for managing JIRA. (__[View on registry.terraform.io](https://registry.terraform.io/providers/fourplusone/jira/latest)__)
+Terraform Provider for managing Jira Cloud. (__[View on registry.terraform.io](https://registry.terraform.io/providers/pierresebastien/jira/latest)__)
 
 ## Data Sources
 
@@ -29,16 +29,9 @@ Terraform Provider for managing JIRA. (__[View on registry.terraform.io](https:/
 
 This can be used to interlink infrastructure management with JIRA issues closely.
 
-![terraform-provider-jira demo](./images/terraform-provider-jira.gif)
+## Known issues
 
-## Compatibility 
-
-
-| Version | Status       |  
-|---------|--------------|
-| Latest  | Tested in CI |
-| 7.x     | Untested     |
-| Cloud   | Untested     |   
+Resources involving users may not works correctly because the provider was originally intend to works with username but this is not possible anymore because the API expect to receive the account id. More information : https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/
 
 ## Install
 
@@ -50,8 +43,8 @@ Copy this code into yout terraform configuration file (for example `main.tf`)
 terraform {
   required_providers {
     jira = {
-      source = "fourplusone/jira"
-      version = "0.1.16"
+      source = "pierresebastien/jira-cloud"
+      version = "0.1.0"
     }
   }
 }
@@ -61,15 +54,7 @@ Run `terraform init`
 
 ## Example Usage
 
-Set JIRA URL, Username and Password using environment variables
-
-```bash
-export JIRA_URL=http://localhost:8080
-export JIRA_USER=username
-export JIRA_PASSWORD=password
-```
-
-It's also possible to use an API-Token from JIRA cloud. In this case, set 
+Set Jira Cloud instance URL, Username and API-Token using environment variables
 
 ```bash
 export JIRA_URL=https://yourinstance.atlassian.net
@@ -82,7 +67,7 @@ Create terraform config file
 ```hcl
 
 provider "jira" {
-  url = "https://myjira.atlassian.net" # Can also be set using the JIRA_URL environment variable
+  url = "https://yourinstance.atlassian.net" # Can also be set using the JIRA_URL environment variable
   # user = "xxxx"                      # Can also be set using the JIRA_USER environment variable
   # password = "xxxx"                  # Can also be set using the JIRA_PASSWORD environment variable
 }
@@ -314,7 +299,7 @@ Clone repository to: `$HOME/development/terraform-providers/`
 
 ```sh
 $ mkdir -p $HOME/development/terraform-providers/; cd $HOME/development/terraform-providers/
-$ git clone git@github.com:fourplusone/terraform-provider-jira
+$ git clone git@github.com:pierresebastien/terraform-provider-jira
 ...
 ```
 
@@ -324,30 +309,9 @@ Enter the provider directory and run `make build` to build the provider
 $ make build
 ```
 
-## Testing
-Testing requires a JIRA instance. To set up a temporary, local JIRA instance you can use the [Docker Atlas](https://github.com/fourplusone/docker-atlas) container:
-
-```sh
-$ git clone https://github.com/fourplusone/docker-atlas
-$ cd docker-atlas
-$ docker build -f jira.dockerfile . -t jira-docker
-$ docker run --rm -t -p 2990:2990 jira-docker
-```
-
-Building and starting the JIRA instance will take several minutes.
-
-To run the tests, run `make test` inside the provider folder
-
-```sh
-$ make test
-```
-
-## Rationale
-Working in Operations engineering organizations infrastructure is often driven by tickets. Why not track infrastructure using tickets but this time we will use code.
-This just showcases that you can pretty much Terraform anything!
-
 
 ## Credits
 
 - Anubhav Mishra (anubhavmishra)
 - Matthias Bartelmess (fourplusone)
+- Pierre Sébastien
